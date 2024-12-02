@@ -1,35 +1,63 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+/* eslint-disable no-irregular-whitespace */
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import Root from './components/Root/Root'
+import HomePage from './components/HomePage/HomePage'
+import WineCollectionPage from './components/WineCollectionPage/WineCollectionPage'
+import RecommendationPage from './components/RecommendationPage/RecommendationPage'
+import {Wine, Rating, Coordinates} from './types'
+import { useEffect, useState } from 'react'
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+// auth header with bearer token
+const headers = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhvLXBpbmcua2V1bmdAc3R1ZGVudC5hcC5iZSIsImlhdCI6MTczMzE2NDA0Mn0.OFTLYPhlwtmBhQXt_qNNQpOkfOgOdh2duO9vu-eRXCU'};
+const baseURL = "https://sampleapis.assimilate.be/wines/reds/";
+
+const App = () => {
+
+  const [wines, setWines] = useState<Wine[]>([]);
+
+  const loadWines = async() => {
+    const response = await fetch(baseURL, {headers});
+    const wineJson: Wine[] = await response.json();
+    
+    setWines(wineJson.map(wine => {
+      return wine;
+    }));
+  }
+
+  useEffect(() => {
+    setWines([])
+    loadWines();
+  }, []);
+
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <Root/>,
+      children: [
+        {
+          path: "",
+          element: <HomePage/>
+        },
+        {
+          path: "collection",
+          element: <WineCollectionPage/>
+        },
+        {
+          path: "recommendation",
+          element: <RecommendationPage/>
+        }
+      ]
+    }
+  ]);
+
+  console.log(wines);
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <RouterProvider router={router}/>
     </>
-  )
+  );
 }
 
 export default App
