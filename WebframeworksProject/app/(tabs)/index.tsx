@@ -1,17 +1,19 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState, useContext } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import {Wine, Rating, Coordinates} from './types';
-import DataProvider, { DataContext } from './components/DataProvider';
-import WineCollection from './components/WineCollection';
+import {Wine, Rating, Coordinates} from '../../types';
+import DataProvider, { DataContext } from '../../components/DataProvider';
+import HighlyRated from '../../components/HighlyRated';
+import Trending from '../../components/Trending';
+import NewlyAdded from '../../components/NewlyAdded';
 
 const App = () =>  {
   return (
-    <DataProvider>
       <View style={styles.container}>
-        <WineCollection/>
+        <HighlyRated/>
+        <Trending/>
+        <NewlyAdded/>
       </View>
-    </DataProvider>
   );
 }
 
