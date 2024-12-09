@@ -24,13 +24,13 @@ const Trending = () => {
     const { wines } = useContext(DataContext);
     const [trendingWines, setTrendingWines] = useState<Wine[]>([]);
 
-    async function getFeatured() {
+    async function getTrending() {
         const filteredWines = wines.slice(0, 10).sort((a, b) => Number(b.rating.reviews.replace(/[^0-9]/g, '')) - Number(a.rating.reviews.replace(/[^0-9]/g, '')));
         setTrendingWines(filteredWines);
     }
 
     useEffect(() => {
-        getFeatured()
+        getTrending()
     }, [wines]);
     
     return (
