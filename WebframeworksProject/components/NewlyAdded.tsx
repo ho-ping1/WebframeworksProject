@@ -34,7 +34,7 @@ const NewlyAdded = () => {
 
     async function getNewWines() {
         const filteredWines = wines.slice(0, 10).filter((wine) => {
-            return ((Math.floor(currentDate.getTime() / 60000) - Math.floor(wine.date?.getTime()! / 60000)) <= 43829)
+            (Math.floor(currentDate.getTime() / 60000) - Math.floor(wine.date?.getTime()! / 60000)) >= 43829
         });
         if (filteredWines != undefined) {
             setNewWines(filteredWines);
