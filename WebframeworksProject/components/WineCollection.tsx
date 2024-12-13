@@ -1,6 +1,6 @@
 import { Wine } from '../types';
 import { View, Text, FlatList, Pressable, Image, StyleSheet } from 'react-native';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import DataProvider, { DataContext } from './DataProvider';
 import { useRouter } from "expo-router";
 
@@ -52,13 +52,25 @@ const styles = StyleSheet.create({
 })
 
 const WineCollection = () => {
-    let { wines } = useContext(DataContext);
+    let { wines, setWines } = useContext(DataContext);
+    const [refreshing, setRefreshing] = useState(false);
+
+    const refreshList = async() => {
+        setRefreshing(true);
+        // wait 2 seconds to simulate API call (or whatever)
+        await new Promise((resolve, reject) => setTimeout(resolve, 2000));
+        setWines(wines);
+        setRefreshing(false);
+    }
+
     return (
         <FlatList
             data={wines}
             renderItem={({ item }) => <WineItem wine={item}/>}
             keyExtractor={(item) => item.id.toString()}
             showsVerticalScrollIndicator={false}
+            refreshing={refreshing}
+            onRefresh={() => refreshList()}
         />
     );
 }

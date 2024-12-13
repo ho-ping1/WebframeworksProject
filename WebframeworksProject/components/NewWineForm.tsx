@@ -5,7 +5,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { DataContext } from "./DataProvider";
 
 const NewWineForm = () => {
-    const { wines, setRefresh } = useContext(DataContext);
+    const { wines, setWines } = useContext(DataContext);
     const [wine, setWine] = useState<string>("");
     const [winery, setWinery] = useState<string>("");
     const [country, setCountry] = useState<string>("");
@@ -35,7 +35,7 @@ const NewWineForm = () => {
             wine: wine,
             rating: {
                 average: "0",
-                reviews: "0 reviews",
+                reviews: "0 ratings",
             },
             location: country,
             coordinates: {
@@ -46,9 +46,18 @@ const NewWineForm = () => {
             id: wines.length + 1
         };
 
-        const header = { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InMxNTMyNDdAYXAuYmUiLCJpYXQiOjE3MzQwMTY1MDR9.KOT48cnZaHBxBgn1lwBcA7dp-2pBX26RNmY6ez3fJYE' }, body: JSON.stringify(postData) };
-        const baseURL = "https://sampleapis.assimilate.be/wines/reds/";
-        let response = await fetch(baseURL, header );
+        const baseURL = "https://sampleapis.assimilate.be/wines/reds";
+        const response = await fetch(baseURL, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhvLXBpbmcua2V1bmdAc3R1ZGVudC5hcC5iZSIsImlhdCI6MTczNDEyODI3MX0.kzFZQlmcjOabTfOIa7-mX8CZsumOa6nCPKTG6E61wmY',  
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(postData)
+        });
+        console.log('Payload being sent:', JSON.stringify(postData));
+        console.log(response)
         const data = await response.json();
         console.log('Response from server:', data);
         setWine("");
@@ -56,7 +65,7 @@ const NewWineForm = () => {
         setCountry("");
         setLatitude(0);
         setLongitude(0);
-        setRefresh(wines.length + 1);
+        setWines([...wines, data])
     }
 
     return (

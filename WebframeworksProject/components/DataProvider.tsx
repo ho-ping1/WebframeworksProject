@@ -3,24 +3,23 @@ import React, { createContext, useEffect, useState } from 'react';
 
 export interface DataContext {
     wines: Wine[];
-    setRefresh: React.Dispatch<React.SetStateAction<Number>>
+    setWines: React.Dispatch<React.SetStateAction<Wine[]>>;
+    loadWines: () => void;
 }
 
-export const DataContext = createContext<DataContext>({wines: [], setRefresh: () => {}});
+export const DataContext = createContext<DataContext>({wines: [], setWines: () => {}, loadWines: () => {}});
 
 const DataProvider = ({children}: {children: React.ReactNode}) => {
     const [wines, setWines] = useState<Wine[]>([]);
-    const [refresh, setRefresh] = useState<Number>(0);
     const loadWines = async() => {
         try {    
-            const headers = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InMxNTMyNDdAYXAuYmUiLCJpYXQiOjE3MzQwMTY1MDR9.KOT48cnZaHBxBgn1lwBcA7dp-2pBX26RNmY6ez3fJYE' };
-            const baseURL = "https://sampleapis.assimilate.be/wines/reds/";
+            const headers = { 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhvLXBpbmcua2V1bmdAc3R1ZGVudC5hcC5iZSIsImlhdCI6MTczNDEyODI3MX0.kzFZQlmcjOabTfOIa7-mX8CZsumOa6nCPKTG6E61wmY' };
+            const baseURL = "https://sampleapis.assimilate.be/wines/reds";
             let response = await fetch(baseURL, {headers});
             if (!response.ok){
                 throw new Error(`Failed to fetch ${response.status}, ${response.statusText}`)
             }
             let wines: Wine[] = await response.json();
-            wines.shift();
             setWines(wines);
             
         } catch (error) {
@@ -29,15 +28,11 @@ const DataProvider = ({children}: {children: React.ReactNode}) => {
     };
   
     useEffect(() => {
-      loadWines()
+        loadWines()
     }, []);
 
-    useEffect(() => {
-        loadWines()
-    }, [refresh]);
-
     return (
-        <DataContext.Provider value={{wines: wines, setRefresh}}>
+        <DataContext.Provider value={{wines: wines, setWines, loadWines}}>
             {children}
         </DataContext.Provider>
     );
