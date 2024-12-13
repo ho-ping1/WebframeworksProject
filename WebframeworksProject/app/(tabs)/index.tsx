@@ -1,18 +1,20 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState, useContext } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import {Wine, Rating, Coordinates} from '../../types';
 import DataProvider, { DataContext } from '../../components/DataProvider';
 import HighlyRated from '../../components/HighlyRated';
 import Trending from '../../components/Trending';
-import NewlyAdded from '../../components/NewlyAdded';
+import ItalianWine from '../../components/USWines';
 
 const App = () =>  {
   return (
       <View style={styles.container}>
-        <HighlyRated/>
-        <Trending/>
-        <NewlyAdded/>
+        <ScrollView showsVerticalScrollIndicator={false} >
+          <HighlyRated/>
+          <Trending/>
+          <ItalianWine/>
+        </ScrollView>
       </View>
   );
 }
@@ -23,6 +25,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    padding: 5
   },
 });
 

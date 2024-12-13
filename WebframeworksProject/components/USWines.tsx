@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Text, View, FlatList, Pressable, Image, StyleSheet } from "react-native";
+import { Text, View, FlatList, Pressable, StyleSheet, Image } from "react-native";
 import { DataContext } from "./DataProvider";
 import { Wine } from "../types";
 import { useRouter } from "expo-router";
@@ -72,32 +72,32 @@ const styles = StyleSheet.create({
     }
 })
 
-const Trending = () => {
+const USWines = () => {
     const { wines } = useContext(DataContext);
-    const [trendingWines, setTrendingWines] = useState<Wine[]>([]);
+    const [featuredWines, setFeaturedWines] = useState<Wine[]>([]);
 
-    async function getTrending() {
-        const filteredWines = wines.slice(0, 10).sort((a, b) => Number(b.rating.reviews.replace(/[^0-9]/g, '')) - Number(a.rating.reviews.replace(/[^0-9]/g, '')));
-        setTrendingWines(filteredWines);
+    async function getFeatured() {
+        const filteredWines = wines.filter(wine => wine.location.toLowerCase().includes('United States'.toLowerCase()))
+        setFeaturedWines(filteredWines);
     }
 
     useEffect(() => {
-        getTrending()
+        getFeatured()
     }, [wines]);
-    
+
     return (
         <View>
-            <Text style={{fontSize: 20, padding: 5}}>What's trending?</Text>
+            <Text style={{fontSize: 20, padding: 5}}>From Italy</Text>
             <FlatList 
                 horizontal={true}
-                data={trendingWines}
+                data={featuredWines}
                 renderItem={({ item }) => <WineItem wine={item}/>}
-                keyExtractor={(item) => item.id.toString()}     
-                showsHorizontalScrollIndicator={false}       
+                keyExtractor={(item) => item.id.toString()}   
+                showsHorizontalScrollIndicator={false}  
                 style={{paddingBottom: 10}}
             />
         </View>
     )
 }
 
-export default Trending;
+export default USWines;

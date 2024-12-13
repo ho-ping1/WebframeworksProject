@@ -15,29 +15,32 @@ function roundHalf(num: number) {
 
 const WineItem = ({ wine }: WineProps) => {
     const router = useRouter();
-    const [rating, setRating] = useState(roundHalf(wine.rating.average));
+    const [rating, setRating] = useState(roundHalf(Number(wine.rating.average)));
 
     return (
-        <View style={styles.container}>
+        <View style={styles.wineContainer}>
             <Pressable onPress={() => {router.push("/" + wine.wine)}}>
                 <View style={styles.imageContainer}>
                     <Image 
-                        style={{width: 40,height: 160}}
+                        resizeMode="contain" 
+                        style={{width: 40, height: 150}}
                         source={{uri: wine.image}}
                     />
                 </View>
-                <Text>{wine.wine}</Text>
-                <Text>{wine.winery}</Text>
-                <View pointerEvents="none" style={{width: 100, flexDirection: "row"}}>
+                <View style={styles.wineHeader}>
+                    <Text style={{paddingBottom: 2}}>{wine.winery}</Text>
+                    <Text style={{fontWeight: 'bold'}}>{wine.wine}</Text>                   
+                </View>
+                <View pointerEvents="none" style={{width: 100, flexDirection: "row", height: 20}}>
                     <Text style={styles.rating}>{wine.rating.average}</Text> 
                     <StarRating 
-                            rating={rating}
-                            onChange={setRating}
-                            color="red"
-                            starSize={20}
-                            starStyle={{paddingLeft: 5, paddingRight: 5}}
-                            style={{width: 5, justifyContent: "center"}}
-                        />
+                        rating={rating}
+                        onChange={setRating}
+                        color="#8E041A"
+                        starSize={15}
+                        starStyle={{paddingLeft: 2, paddingRight: 2}}
+                        style={{width: 5, justifyContent: "center"}}
+                    />
                 </View>
             </Pressable>
         </View>
@@ -45,21 +48,27 @@ const WineItem = ({ wine }: WineProps) => {
 }
 
 const styles = StyleSheet.create({
-    container: {
+    wineContainer: {
         width: 170,
-        height: 270,
+        height: 290,
         borderColor: "grey",
         borderWidth: 1,
         borderRadius: 10,
         margin: 5,
-        padding: 10
+        padding: 10,
+        paddingBottom: 30,
     },
     imageContainer: {
+        height: 160,
         paddingBottom: 5,
         alignItems: "center"
     },
+    wineHeader: {
+        height: 80,
+        paddingBottom: 20
+    },
     rating: {
-        fontSize: 20
+        fontSize: 15
     }
 })
 
@@ -68,7 +77,7 @@ const HighlyRated = () => {
     const [featuredWines, setFeaturedWines] = useState<Wine[]>([]);
 
     async function getFeatured() {
-        let filteredWines = wines.slice(0, 10).sort((a, b) => Number(b.rating.average) - Number(a.rating.average));
+        const filteredWines = wines.slice(0, 10).sort((a, b) => Number(b.rating.average) - Number(a.rating.average));
         setFeaturedWines(filteredWines);
     }
 
@@ -77,12 +86,17 @@ const HighlyRated = () => {
     }, [wines]);
 
     return (
-        <FlatList 
-            horizontal={true}
-            data={featuredWines}
-            renderItem={({ item }) => <WineItem wine={item}/>}
-            keyExtractor={(item) => item.id.toString()}           
-        />
+        <View>
+            <Text style={{fontSize: 20, padding: 5}}>Top rated</Text>
+            <FlatList 
+                horizontal={true}
+                data={featuredWines}
+                renderItem={({ item }) => <WineItem wine={item}/>}
+                keyExtractor={(item) => item.id.toString()}   
+                showsHorizontalScrollIndicator={false}  
+                style={{paddingBottom: 10}}
+            />
+        </View>
     )
 }
 

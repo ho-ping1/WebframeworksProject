@@ -5,16 +5,15 @@ export interface Wine {
     location: string,
     coordinates: Coordinates,
     image: string,
-    id: number,
-    date?: Date
+    id: number
 };
 
 export interface Rating {
-    average: number,
+    average: string,
     reviews: string
 };
 
 export interface Coordinates {
-    latitude: string,
-    longitude: string
+    latitude: number,
+    longitude: number
 }

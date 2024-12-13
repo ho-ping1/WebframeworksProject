@@ -6,7 +6,7 @@ const Layout = () => {
         <Tabs
             screenOptions= {{
                 headerTintColor: "white",
-                headerStyle: {backgroundColor: "red"}
+                headerStyle: {backgroundColor: "#8E041A"}
             }}
         >
             <Tabs.Screen name="index" options={{title: "Home"}}/>

@@ -5,12 +5,12 @@ import * as ImagePicker from 'expo-image-picker';
 import { DataContext } from "./DataProvider";
 
 const NewWineForm = () => {
-    const { wines } = useContext(DataContext);
+    const { wines, setRefresh } = useContext(DataContext);
     const [wine, setWine] = useState<string>("");
     const [winery, setWinery] = useState<string>("");
     const [country, setCountry] = useState<string>("");
-    const [latitude, setLatitude] = useState<string>("");
-    const [longitude, setLongitude] = useState<string>("");;
+    const [latitude, setLatitude] = useState<number>(0);
+    const [longitude, setLongitude] = useState<number>(0);;
     const [image, setImage] = useState<string>("");
 
     const PickImage = async () => {
@@ -34,7 +34,7 @@ const NewWineForm = () => {
             winery: winery,
             wine: wine,
             rating: {
-                average: 0,
+                average: "0",
                 reviews: "0 reviews",
             },
             location: country,
@@ -43,21 +43,20 @@ const NewWineForm = () => {
                 longitude: longitude,
             },
             image: image,
-            id: wines.length + 1,
-            date: new Date()
+            id: wines.length + 1
         };
 
-        const header = { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhvcGluZy5rZXVuZ0BzdHVkZW50LmFwLmJlIiwiaWF0IjoxNzMzMjQ3NDc2fQ.oQ4JCAGe3JS7VBgJPFQb1vBNE0HPoUhvmdu8ZqU5YmM' }, body: JSON.stringify(postData) };
+        const header = { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InMxNTMyNDdAYXAuYmUiLCJpYXQiOjE3MzQwMTY1MDR9.KOT48cnZaHBxBgn1lwBcA7dp-2pBX26RNmY6ez3fJYE' }, body: JSON.stringify(postData) };
         const baseURL = "https://sampleapis.assimilate.be/wines/reds/";
         let response = await fetch(baseURL, header );
         const data = await response.json();
-        DataContext
         console.log('Response from server:', data);
         setWine("");
         setWinery("");
         setCountry("");
-        setLatitude("");
-        setLongitude("");
+        setLatitude(0);
+        setLongitude(0);
+        setRefresh(wines.length + 1);
     }
 
     return (
@@ -95,8 +94,8 @@ const NewWineForm = () => {
                 autoCapitalize="words"
                 placeholder="Latitude"
                 keyboardType="default"
-                onChangeText={text => setLatitude(text)}
-                value={latitude}
+                onChangeText={text => setLatitude(Number(text))}
+                value={String(latitude)}
             />
             <Text>Longitude:</Text>
             <TextInput
@@ -104,8 +103,8 @@ const NewWineForm = () => {
                 autoCapitalize="words"
                 placeholder="Longitude"
                 keyboardType="default"
-                onChangeText={text => setLongitude(text)}
-                value={longitude}
+                onChangeText={text => setLongitude(Number(text))}
+                value={String(longitude)}
             />
             <Button title="Upload" onPress={PickImage} />
             {image && <Image source={{ uri: image }} style={styles.image} />}
