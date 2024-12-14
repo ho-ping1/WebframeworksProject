@@ -13,7 +13,7 @@ const DataProvider = ({children}: {children: React.ReactNode}) => {
     const [wines, setWines] = useState<Wine[]>([]);
     const loadWines = async() => {
         try {    
-            const headers = { 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhvLXBpbmcua2V1bmdAc3R1ZGVudC5hcC5iZSIsImlhdCI6MTczNDEyODI3MX0.kzFZQlmcjOabTfOIa7-mX8CZsumOa6nCPKTG6E61wmY' };
+            const headers = { 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhvLXBpbmcua2V1bmdAc3R1ZGVudC5hcC5iZSIsImlhdCI6MTczNDE3OTI1Mn0.yg7or_yACESMbF93I-UwbBelwFh_C2MQCzUEFkVtT_Y' };
             const baseURL = "https://sampleapis.assimilate.be/wines/reds";
             let response = await fetch(baseURL, {headers});
             if (!response.ok){

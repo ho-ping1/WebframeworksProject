@@ -34,7 +34,7 @@ const WineItem = ({ wine }: WineProps) => {
                 <View pointerEvents="none" style={{width: 100, flexDirection: "row", height: 20}}>
                     <Text style={styles.rating}>{wine.rating.average}</Text> 
                     <StarRating 
-                        rating={rating}
+                        rating={roundHalf(Number(wine.rating.average))}
                         onChange={setRating}
                         color="#8E041A"
                         starSize={15}

@@ -51,7 +51,7 @@ const NewWineForm = () => {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
-                Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhvLXBpbmcua2V1bmdAc3R1ZGVudC5hcC5iZSIsImlhdCI6MTczNDEyODI3MX0.kzFZQlmcjOabTfOIa7-mX8CZsumOa6nCPKTG6E61wmY',  
+                Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhvLXBpbmcua2V1bmdAc3R1ZGVudC5hcC5iZSIsImlhdCI6MTczNDE3OTI1Mn0.yg7or_yACESMbF93I-UwbBelwFh_C2MQCzUEFkVtT_Y',  
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(postData)

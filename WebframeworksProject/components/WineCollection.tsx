@@ -25,7 +25,7 @@ const WineItem = ({ wine }: WineProps) => {
                 <View>
                     <Text style={{paddingBottom: 2}}>{wine.winery}</Text>
                     <Text style={{fontWeight: 'bold'}}>{wine.wine}</Text>    
-                    <Text>{wine.location.replace("\n·\n", ", ")}</Text>               
+                    <Text style={{paddingBottom: 10}}>{wine.location.replace("\n·\n", ", ")}</Text>               
                 </View>
                 </View>
             </Pressable>
@@ -57,7 +57,6 @@ const WineCollection = () => {
 
     const refreshList = async() => {
         setRefreshing(true);
-        // wait 2 seconds to simulate API call (or whatever)
         await new Promise((resolve, reject) => setTimeout(resolve, 2000));
         setWines(wines);
         setRefreshing(false);

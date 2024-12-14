@@ -2,9 +2,10 @@ import { Stack, useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { DataContext } from "../components/DataProvider";
-import MapView from 'react-native-maps';
+import MapView, {Region, Marker } from 'react-native-maps';
 import StarRating from 'react-native-star-rating-widget';
 import { Wine } from "../types";
+import CountryFlag from "react-native-country-flag";
 
 const WineProfile = () => {
     const { wines, setWines} = useContext(DataContext);
@@ -54,29 +55,31 @@ const WineProfile = () => {
     useEffect(() => {
          const loadWines = async() => {
             try {    
+                const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+            await delay(3000);
                 const baseURL = "https://sampleapis.assimilate.be/wines/reds";
                 let response = await fetch(baseURL, {
                     method: 'GET', 
                     headers: {
-                        Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhvLXBpbmcua2V1bmdAc3R1ZGVudC5hcC5iZSIsImlhdCI6MTczNDEyODI3MX0.kzFZQlmcjOabTfOIa7-mX8CZsumOa6nCPKTG6E61wmY'
+                        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhvLXBpbmcua2V1bmdAc3R1ZGVudC5hcC5iZSIsImlhdCI6MTczNDE3OTI1Mn0.yg7or_yACESMbF93I-UwbBelwFh_C2MQCzUEFkVtT_Y'
                     }
                 });
                 if (!response.ok){
                    throw new Error(`Failed to fetch ${response.status}, ${response.statusText}`)
                 }
-                let wines: Wine[] = await response.json();
-                setWines(wines);    
+                const wineData: Wine[] = await response.json();
+                setWines(wineData);    
             } catch (error) {
                 console.log("Error", error)
             }
-        };
+        };     
         loadWines();
     }, [reviews]);
     
     return (
         <View style={{padding: 10}}>
             <Stack.Screen options={{title: "Wine Profile"}}/>
-            <View>
+            <View style={{paddingBottom: 30}}>
                 <View style={styles.wineImageRatingContainer}>
                     <View style={styles.wineImageContainer}>
                         <Image
@@ -96,10 +99,28 @@ const WineProfile = () => {
                         <Text style={{fontSize: 15}}>{reviews} ratings</Text>
                     </View>
                 </View>
-                <Text><Text>{wine!.location.replace("\n·\n", ", ")}</Text></Text>
-            </View>
-            
-            <MapView style={styles.map} />
+                <Text style={{fontSize: 18, paddingBottom: 5}}>{wine!.winery}</Text>
+                <Text style={{fontSize: 20, fontWeight: "bold"}}>{wine!.wine}</Text>
+                <Text style={{fontSize: 15}}><CountryFlag isoCode="de" size={12} /> {wine!.location.replace("\n·\n", "\n")}</Text>
+            </View>           
+            <MapView 
+                style={styles.map}
+                initialRegion={{
+                    latitude: wine!.coordinates.latitude,
+                    longitude: wine!.coordinates.longitude,
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0921,
+                }}
+            >
+                <Marker
+                    key={wine!.wine}
+                    coordinate={{
+                        latitude: wine!.coordinates.latitude,
+                        longitude: wine!.coordinates.longitude
+                    }}
+                    title={wine!.winery}
+                />  
+            </MapView>
         </View>
     )
 }
@@ -112,7 +133,8 @@ const styles = StyleSheet.create({
     },
     wineImageRatingContainer: {
         width: "100%",
-        flexDirection: "row"
+        flexDirection: "row",
+        paddingBottom: 15
     },
     wineImageContainer: {
         width: "50%",
