@@ -16,10 +16,24 @@ function roundHalf(num: number) {
 const WineItem = ({ wine }: WineProps) => {
     const router = useRouter();
     const [rating, setRating] = useState(roundHalf(Number(wine.rating.average)));
+    const { recent, setRecent, postRecent } = useContext(DataContext);
+
+    useEffect(() => {
+        postRecent()
+    }, [recent]);
 
     return (
         <View style={styles.wineContainer}>
-            <Pressable onPress={() => {router.push("/" + wine.wine)}}>
+            <Pressable onPress={() => 
+                    {router.push("/" + wine.wine);
+                    if (recent.length <= 10) {
+                        setRecent(recent.slice(0, -1));
+                        setRecent([wine.wine, ...recent]);
+                    } else {
+                        setRecent([wine.wine, ...recent]);
+                    }    
+                }}
+            >
                 <View style={styles.imageContainer}>
                     <Image 
                         resizeMode="contain" 

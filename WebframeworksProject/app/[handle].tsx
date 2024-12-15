@@ -8,15 +8,29 @@ import { Wine } from "../types";
 import CountryFlag from "react-native-country-flag";
 
 const WineProfile = () => {
-    const { wines, setWines} = useContext(DataContext);
+    const { wines, setWines, loadWines} = useContext(DataContext);
     const { handle } = useLocalSearchParams<{ handle: string}>();
     const wine = wines.find(wine => wine.wine == handle);
     const [rating, setRating] = useState(Number(wine!.rating.average));
-    const [reviews, setReviews] = useState(Number(wine!.rating.reviews.replace(/[^0-9]/g, '')))
-    
+    const [reviews, setReviews] = useState(Number(wine!.rating.reviews.replace(/[^0-9]/g, '')));
+    const countries: string[] = ["Spain", "Italy, Portugal", "United States", "France", "Argentina", "South Africa", "Hungary"];
+    const countriesIso: string[] = ["es", "it", "us", "fr", "ar", "za", "hu"];
 
     function roundHalf(num: number) {
         return Math.round(num * 2)/2;
+    }
+
+    function findIso (country: string) {
+        const indexCountry: number = countries.findIndex(name => name.toLowerCase() == country.toLowerCase())
+        if (indexCountry) {
+            return countriesIso[indexCountry];
+        } else {
+            return null;
+        }
+    }
+
+    function getStringBeforeChar(str: string, char: string): string {
+        return str.split(char)[0];
     }
 
     const Rate = async (number: number) => {
@@ -53,26 +67,11 @@ const WineProfile = () => {
         setReviews(amountReviews + 1);
     }
     useEffect(() => {
-         const loadWines = async() => {
-            try {    
-                const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-            await delay(3000);
-                const baseURL = "https://sampleapis.assimilate.be/wines/reds";
-                let response = await fetch(baseURL, {
-                    method: 'GET', 
-                    headers: {
-                        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhvLXBpbmcua2V1bmdAc3R1ZGVudC5hcC5iZSIsImlhdCI6MTczNDE3OTI1Mn0.yg7or_yACESMbF93I-UwbBelwFh_C2MQCzUEFkVtT_Y'
-                    }
-                });
-                if (!response.ok){
-                   throw new Error(`Failed to fetch ${response.status}, ${response.statusText}`)
-                }
-                const wineData: Wine[] = await response.json();
-                setWines(wineData);    
-            } catch (error) {
-                console.log("Error", error)
-            }
-        };     
+        const Delay = async() => {
+            const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+            await delay(3000); 
+        }
+        Delay();
         loadWines();
     }, [reviews]);
     
@@ -101,13 +100,19 @@ const WineProfile = () => {
                 </View>
                 <Text style={{fontSize: 18, paddingBottom: 5}}>{wine!.winery}</Text>
                 <Text style={{fontSize: 20, fontWeight: "bold"}}>{wine!.wine}</Text>
-                <Text style={{fontSize: 15}}><CountryFlag isoCode="de" size={12} /> {wine!.location.replace("\n·\n", "\n")}</Text>
-            </View>           
+                {wine?.location ? 
+                    <Text style={{fontSize: 15}}>
+                        { findIso(getStringBeforeChar(wine.location, '\n')) ? <CountryFlag isoCode={findIso(getStringBeforeChar(wine.location, '\n'))!} size={12} />
+                        : ""} {wine!.location.replace("\n·\n", "\n")}
+                    </Text> 
+                : ""}
+            </View>
+            { wine?.coordinates.latitude ?           
             <MapView 
                 style={styles.map}
                 initialRegion={{
-                    latitude: wine!.coordinates.latitude,
-                    longitude: wine!.coordinates.longitude,
+                    latitude: wine!.coordinates.latitude!,
+                    longitude: wine!.coordinates.longitude!,
                     latitudeDelta: 0.0922,
                     longitudeDelta: 0.0921,
                 }}
@@ -115,12 +120,13 @@ const WineProfile = () => {
                 <Marker
                     key={wine!.wine}
                     coordinate={{
-                        latitude: wine!.coordinates.latitude,
-                        longitude: wine!.coordinates.longitude
+                        latitude: wine!.coordinates.latitude!,
+                        longitude: wine!.coordinates.longitude!
                     }}
                     title={wine!.winery}
                 />  
-            </MapView>
+            </MapView> :
+            <Text>No map location</Text> }
         </View>
     )
 }

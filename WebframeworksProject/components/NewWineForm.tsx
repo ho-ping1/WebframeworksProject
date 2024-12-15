@@ -5,7 +5,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { DataContext } from "./DataProvider";
 
 const NewWineForm = () => {
-    const { wines, setWines } = useContext(DataContext);
+    const { wines, setWines, loadWines } = useContext(DataContext);
     const [wine, setWine] = useState<string>("");
     const [winery, setWinery] = useState<string>("");
     const [country, setCountry] = useState<string>("");
@@ -65,8 +65,17 @@ const NewWineForm = () => {
         setCountry("");
         setLatitude(0);
         setLongitude(0);
-        setWines([...wines, data])
+        setWines([...wines, data]);
     }
+
+    useEffect(() => {
+        const Delay = async() => {
+            const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+            await delay(3000); 
+        }
+        Delay();
+        loadWines();
+    }, [wines]);
 
     return (
         <View>

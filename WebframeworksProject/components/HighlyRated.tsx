@@ -4,6 +4,7 @@ import { DataContext } from "./DataProvider";
 import { Wine } from "../types";
 import { useRouter } from "expo-router";
 import StarRating from 'react-native-star-rating-widget';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface WineProps {
     wine: Wine
@@ -15,11 +16,25 @@ function roundHalf(num: number) {
 
 const WineItem = ({ wine }: WineProps) => {
     const router = useRouter();
+    const { recent, setRecent, postRecent } = useContext(DataContext);
     const [rating, setRating] = useState(roundHalf(Number(wine.rating.average)));
+
+    useEffect(() => {
+        postRecent()
+    }, [recent]);
 
     return (
         <View style={styles.wineContainer}>
-            <Pressable onPress={() => {router.push("/" + wine.wine)}}>
+            <Pressable onPress={() => 
+                {router.push("/" + wine.wine);
+                    if (recent.length <= 10) {
+                        setRecent(recent.slice(0, -1));
+                        setRecent([wine.wine, ...recent]);
+                    } else {
+                        setRecent([wine.wine, ...recent]);
+                    }    
+                }}
+            >
                 <View style={styles.imageContainer}>
                     <Image 
                         resizeMode="contain" 

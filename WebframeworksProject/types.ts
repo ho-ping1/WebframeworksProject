@@ -1,8 +1,8 @@
 export interface Wine {
-    winery: string,
+    winery?: string,
     wine: string,
     rating: Rating,
-    location: string,
+    location?: string,
     coordinates: Coordinates,
     image: string,
     id: number
@@ -14,6 +14,6 @@ export interface Rating {
 };
 
 export interface Coordinates {
-    latitude: number,
-    longitude: number
+    latitude?: number,
+    longitude?: number
 }

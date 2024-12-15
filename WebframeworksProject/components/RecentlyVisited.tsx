@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Text, View, FlatList, Pressable, StyleSheet, Image } from "react-native";
+import { Text, View, FlatList, Pressable, Image, StyleSheet } from "react-native";
 import { DataContext } from "./DataProvider";
 import { Wine } from "../types";
 import { useRouter } from "expo-router";
@@ -86,32 +86,38 @@ const styles = StyleSheet.create({
     }
 })
 
-const USWines = () => {
-    const { wines } = useContext(DataContext);
-    const [featuredWines, setFeaturedWines] = useState<Wine[]>([]);
+const RecentlyVisited = () => {
+    const { wines, recent } = useContext(DataContext);
+    const [recentVisit, setRecentVisit] = useState<Wine[]>([]);
 
-    async function getFeatured() {
-        const filteredWines = wines.filter(wine => wine.location?.toLowerCase().includes('United States'.toLowerCase()))
-        setFeaturedWines(filteredWines);
+    async function getRecent() {
+        const filteredWines = wines.filter(wine => {
+            recent.forEach(wineName => {
+                if (wine.wine == wineName) {
+                    return wine;
+                }
+            });
+        });
+        setRecentVisit(filteredWines);
     }
 
     useEffect(() => {
-        getFeatured()
-    }, [wines]);
-
+        getRecent()
+    }, [recent]);
+    
     return (
         <View>
-            <Text style={{fontSize: 20, padding: 5}}>From The United States</Text>
+            <Text style={{fontSize: 20, padding: 5}}>What's trending?</Text>
             <FlatList 
                 horizontal={true}
-                data={featuredWines}
+                data={recentVisit}
                 renderItem={({ item }) => <WineItem wine={item}/>}
-                keyExtractor={(item) => item.id.toString()}   
-                showsHorizontalScrollIndicator={false}  
+                keyExtractor={(item) => item.id.toString()}     
+                showsHorizontalScrollIndicator={false}       
                 style={{paddingBottom: 10}}
             />
         </View>
     )
 }
 
-export default USWines;
+export default RecentlyVisited;
