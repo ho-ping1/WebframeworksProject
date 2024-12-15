@@ -1,5 +1,5 @@
 import { Stack } from "expo-router";
-import DataProvider, { DataContext } from '../components/DataProvider';
+import DataProvider from '../components/DataProvider';
 
 const layout = () => {
     return (

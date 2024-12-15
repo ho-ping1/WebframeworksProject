@@ -1,4 +1,3 @@
-import { Drawer } from "expo-router/drawer";
 import { Tabs, Navigator } from "expo-router";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Ionicons from '@expo/vector-icons/Ionicons';

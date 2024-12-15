@@ -18,10 +18,6 @@ const WineItem = ({ wine }: WineProps) => {
     const [rating, setRating] = useState(roundHalf(Number(wine.rating.average)));
     const { recent, setRecent, postRecent } = useContext(DataContext);
 
-    useEffect(() => {
-        postRecent()
-    }, [recent]);
-
     return (
         <View style={styles.wineContainer}>
             <Pressable onPress={() => 

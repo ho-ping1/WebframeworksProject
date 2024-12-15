@@ -2,13 +2,13 @@ import { Stack, useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { DataContext } from "../components/DataProvider";
-import MapView, {Region, Marker } from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import StarRating from 'react-native-star-rating-widget';
 import { Wine } from "../types";
 import CountryFlag from "react-native-country-flag";
 
 const WineProfile = () => {
-    const { wines, setWines, loadWines} = useContext(DataContext);
+    const { wines, loadWines} = useContext(DataContext);
     const { handle } = useLocalSearchParams<{ handle: string}>();
     const wine = wines.find(wine => wine.wine == handle);
     const [rating, setRating] = useState(Number(wine!.rating.average));
@@ -30,6 +30,7 @@ const WineProfile = () => {
     }
 
     function getStringBeforeChar(str: string, char: string): string {
+        console.log(str)
         return str.split(char)[0];
     }
 
@@ -39,8 +40,8 @@ const WineProfile = () => {
             winery: wine!.winery,
             wine: wine!.wine,
             rating: {
-                average: String(roundHalf((Number(wine!.rating.average) + number) / 2)),
-                reviews: `${amountReviews + 1} ratings`,
+                average: String(rating),
+                reviews: `${reviews} ratings`,
             },
             location: wine!.location,
             coordinates: {
@@ -63,8 +64,12 @@ const WineProfile = () => {
         });
         const data = await response.json();
         console.log('Response from server:', data);
-        setRating(roundHalf((Number(wine!.rating.average) + number) / 2));
-        setReviews(amountReviews + 1);
+        if (reviews != 0) {
+            setRating((prevRating) => roundHalf((prevRating + number) / 2));
+        } else {
+            setRating((prevRating) => roundHalf((prevRating + number)));
+        }         
+        setReviews((prevReviews) => prevReviews + 1);
     }
     useEffect(() => {    
         loadWines();
@@ -90,7 +95,7 @@ const WineProfile = () => {
                             color="#8E041A"
                             starSize={22}
                         />
-                        <Text style={{fontSize: 15}}>{reviews} ratings</Text>
+                        <Text style={{fontSize: 15, color: "grey"}}>{reviews} ratings</Text>
                     </View>
                 </View>
                 <Text style={{fontSize: 18, paddingBottom: 5}}>{wine!.winery}</Text>

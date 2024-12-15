@@ -4,7 +4,6 @@ import { DataContext } from "./DataProvider";
 import { Wine } from "../types";
 import { useRouter } from "expo-router";
 import StarRating from 'react-native-star-rating-widget';
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface WineProps {
     wine: Wine
@@ -19,9 +18,7 @@ const WineItem = ({ wine }: WineProps) => {
     const { recent, setRecent, postRecent } = useContext(DataContext);
     const [rating, setRating] = useState(roundHalf(Number(wine.rating.average)));
 
-    useEffect(() => {
-        postRecent()
-    }, [recent]);
+    
 
     return (
         <View style={styles.wineContainer}>

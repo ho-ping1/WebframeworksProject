@@ -1,15 +1,16 @@
-import { useContext, useEffect, useState } from "react";
-import { View, TextInput, Text, StyleSheet, Button, Image, Alert, Pressable, ScrollView } from "react-native"
-import { Coordinates, Wine } from "../types";
+import { useContext, useState } from "react";
+import { View, TextInput, Text, StyleSheet, Button, Image, Alert, Pressable, ScrollView, Animated } from "react-native"
+import { Wine } from "../types";
 import * as ImagePicker from 'expo-image-picker';
 import { DataContext } from "./DataProvider";
 import EvilIcons from '@expo/vector-icons/EvilIcons';
 
 const NewWineForm = () => {
-    const { wines, setWines } = useContext(DataContext);
+    const { wines, setWines, loadWines } = useContext(DataContext);
     const [wine, setWine] = useState<string>("");
     const [winery, setWinery] = useState<string>("");
     const [country, setCountry] = useState<string>("");
+    const [region, setRegion] = useState<string>("");
     const [latitude, setLatitude] = useState<number>(0);
     const [longitude, setLongitude] = useState<number>(0);;
     const [image, setImage] = useState<string>("");
@@ -42,7 +43,7 @@ const NewWineForm = () => {
                 average: "0",
                 reviews: "0 ratings",
             },
-            location: country,
+            location: country + "\n·\n" + region,
             coordinates: {
                 latitude: latitude,
                 longitude: longitude,
@@ -71,26 +72,9 @@ const NewWineForm = () => {
         setLatitude(0);
         setLongitude(0);
         setImage("");
-        setWines([...wines, data]);
-    }
-
-    useEffect(() => {
-        const loadWines = async() => {
-            try {  
-                const headers = { 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InMxNTMyNEBhcC5iZSIsImlhdCI6MTczNDI3Nzk0NX0.pLImlOlUePIcXI_tq7wOYwRRd-qHiQDi9xNldtvJvtY' };
-                const baseURL = "https://sampleapis.assimilate.be/wines/reds";
-                let response = await fetch(baseURL, {headers});
-                if (!response.ok){
-                    throw new Error(`Failed to fetch ${response.status}, ${response.statusText}`)
-                }
-                let wines: Wine[] = await response.json();
-                setWines(wines);   
-            } catch (error) {
-                console.log("Error", error)
-            }
-        }
+        setWines((prevWines) => [...prevWines, data]);
         loadWines();
-    }, [wines]);
+    }
 
     return (
         <View>
@@ -120,10 +104,20 @@ const NewWineForm = () => {
                 style={styles.input}
                 secureTextEntry={false}
                 autoCapitalize="words"
-                placeholder="Spain, Empordà"
+                placeholder="Spain"
                 keyboardType="default"
                 onChangeText={text => setCountry(text)}
                 value={country}
+            />
+            <Text style={styles.text}>Region:</Text>
+            <TextInput
+                style={styles.input}
+                secureTextEntry={false}
+                autoCapitalize="words"
+                placeholder="Empordà"
+                keyboardType="default"
+                onChangeText={text => setRegion(text)}
+                value={region}
             />
             <Text style={styles.text}>Latitude:</Text>
             <TextInput
@@ -180,11 +174,14 @@ const styles = StyleSheet.create({
     text: {
         fontWeight: "bold",
         paddingTop: 7,
-        paddingBottom: 7
+        paddingBottom: 7,
+        marginLeft: 3
     },
     input: {
         borderWidth: 1,
-        padding: 5
+        padding: 5,
+        marginLeft: 10,
+        marginRight: 10
     },
     upload: {
         fontSize: 14,

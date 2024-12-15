@@ -1,7 +1,7 @@
 import { Wine } from '../types';
 import { View, Text, FlatList, Pressable, Image, StyleSheet } from 'react-native';
 import { useContext, useState, useEffect } from 'react';
-import DataProvider, { DataContext } from './DataProvider';
+import { DataContext } from './DataProvider';
 import { useRouter } from "expo-router";
 
 interface WineProps {
@@ -11,10 +11,6 @@ interface WineProps {
 const WineItem = ({ wine }: WineProps) => {
     const router = useRouter();
     const { recent, setRecent, postRecent } = useContext(DataContext);
-
-    useEffect(() => {
-        postRecent()
-    }, [recent]);
 
     return (
         <View >
@@ -86,6 +82,7 @@ const WineCollection = () => {
             showsVerticalScrollIndicator={false}
             refreshing={refreshing}
             onRefresh={() => refreshList()}
+            onEndReachedThreshold={0.5}
         />
     );
 }
