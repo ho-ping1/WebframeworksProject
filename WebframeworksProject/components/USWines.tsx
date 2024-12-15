@@ -28,9 +28,9 @@ const WineItem = ({ wine }: WineProps) => {
                     {router.push("/" + wine.wine);
                     if (recent.length <= 10) {
                         setRecent(recent.slice(0, -1));
-                        setRecent([wine.wine, ...recent]);
+                        setRecent(prevRecent => [wine.wine, ...prevRecent]);
                     } else {
-                        setRecent([wine.wine, ...recent]);
+                        setRecent(prevRecent => [wine.wine, ...prevRecent]);
                     }    
                 }}
             >

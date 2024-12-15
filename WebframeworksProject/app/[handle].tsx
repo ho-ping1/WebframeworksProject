@@ -13,8 +13,8 @@ const WineProfile = () => {
     const wine = wines.find(wine => wine.wine == handle);
     const [rating, setRating] = useState(Number(wine!.rating.average));
     const [reviews, setReviews] = useState(Number(wine!.rating.reviews.replace(/[^0-9]/g, '')));
-    const countries: string[] = ["Spain", "Italy, Portugal", "United States", "France", "Argentina", "South Africa", "Hungary"];
-    const countriesIso: string[] = ["es", "it", "us", "fr", "ar", "za", "hu"];
+    const countries: string[] = ["Spain", "Italy", "Portugal", "United States", "France", "Argentina", "South Africa", "Hungary"];
+    const countriesIso: string[] = ["es", "it", "pt", "us", "fr", "ar", "za", "hu"];
 
     function roundHalf(num: number) {
         return Math.round(num * 2)/2;
@@ -56,7 +56,7 @@ const WineProfile = () => {
             method: 'PUT',
             headers: {
                 Accept: 'application/json',
-                Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhvLXBpbmcua2V1bmdAc3R1ZGVudC5hcC5iZSIsImlhdCI6MTczNDEwNDQ2Nn0.wcI2zdCMXeYagwEOwszuqA0rBwTmzzKrQgsarEGwn3A',  
+                Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InMxNTMyNEBhcC5iZSIsImlhdCI6MTczNDI2NzExMX0.jECsJIsf6JZ44x6DRxQljMQFxKHS0lIajyaY9cG2CFQ',  
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(postData)
@@ -66,12 +66,7 @@ const WineProfile = () => {
         setRating(roundHalf((Number(wine!.rating.average) + number) / 2));
         setReviews(amountReviews + 1);
     }
-    useEffect(() => {
-        const Delay = async() => {
-            const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-            await delay(3000); 
-        }
-        Delay();
+    useEffect(() => {    
         loadWines();
     }, [reviews]);
     

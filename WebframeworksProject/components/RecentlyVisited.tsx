@@ -28,9 +28,9 @@ const WineItem = ({ wine }: WineProps) => {
                     {router.push("/" + wine.wine);
                     if (recent.length <= 10) {
                         setRecent(recent.slice(0, -1));
-                        setRecent([wine.wine, ...recent]);
+                        setRecent(prevRecent => [wine.wine, ...prevRecent]);
                     } else {
-                        setRecent([wine.wine, ...recent]);
+                        setRecent(prevRecent => [wine.wine, ...prevRecent]);
                     }    
                 }}
             >
@@ -72,10 +72,19 @@ const styles = StyleSheet.create({
         padding: 10,
         paddingBottom: 30,
     },
+    wineContainerEmpty: {
+        width: 170,
+        height: 290,
+        borderColor: "grey",
+        borderWidth: 1,
+        borderRadius: 10,
+        margin: 5,
+        paddingBottom: 30,
+        justifyContent: 'center',
+    },
     imageContainer: {
         height: 160,
         paddingBottom: 5,
-        alignItems: "center"
     },
     wineHeader: {
         height: 80,
@@ -89,25 +98,34 @@ const styles = StyleSheet.create({
 const RecentlyVisited = () => {
     const { wines, recent } = useContext(DataContext);
     const [recentVisit, setRecentVisit] = useState<Wine[]>([]);
+    const [empty, setEmpty] = useState<Boolean>(false);
 
     async function getRecent() {
-        const filteredWines = wines.filter(wine => {
-            recent.forEach(wineName => {
-                if (wine.wine == wineName) {
-                    return wine;
-                }
-            });
+        const filteredWines: Wine[] = recent.map(wineName => 
+            wines.find(wine => wine.wine === wineName)!
+        )
+        setRecentVisit(prevState => {
+            const newWines = filteredWines.filter(
+                wine => !prevState.some(existingWine => existingWine.id === wine.id)
+            );
+            return [...newWines, ...prevState];
         });
-        setRecentVisit(filteredWines);
     }
 
     useEffect(() => {
-        getRecent()
+        getRecent()    
     }, [recent]);
+
+    useEffect(() => {
+        if (recentVisit.length == 0) {
+            setEmpty(true);
+        }
+    })
+
     
     return (
         <View>
-            <Text style={{fontSize: 20, padding: 5}}>What's trending?</Text>
+            <Text style={{fontSize: 20, padding: 5}}>Recently visited</Text>
             <FlatList 
                 horizontal={true}
                 data={recentVisit}

@@ -16,7 +16,7 @@ const Layout = () => {
                     tabBarIcon: ({color, size}) => <MaterialIcons name="home" size={24} color="white" />,
                     tabBarStyle: {backgroundColor:"#8E041A"},
                     tabBarActiveTintColor: "yellow",
-                    tabBarInactiveTintColor: "white"
+                    tabBarInactiveTintColor: "white",
                 }}/>
                 <Tabs.Screen name="collection" options={{
                     title: "Collection",

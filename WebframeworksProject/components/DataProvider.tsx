@@ -1,6 +1,7 @@
 import { Wine } from '../types';
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useEffect, useState, useCallback } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SplashScreen from 'expo-splash-screen';
 
 export interface DataContext {
     wines: Wine[];
@@ -9,6 +10,7 @@ export interface DataContext {
     recent: string[];
     setRecent: React.Dispatch<React.SetStateAction<string[]>>;
     postRecent: () => void;
+    appIsReady: Boolean;
 }
 
 export const DataContext = createContext<DataContext>({
@@ -17,12 +19,17 @@ export const DataContext = createContext<DataContext>({
     loadWines: () => {}, 
     recent: [], 
     setRecent: () => {},
-    postRecent: () => {}
+    postRecent: () => {},
+    appIsReady: false
 });
+
+
 
 const DataProvider = ({children}: {children: React.ReactNode}) => {
     const [wines, setWines] = useState<Wine[]>([]);
     const [recent, setRecent] = useState<string[]>([]);
+    const [appIsReady, setAppIsReady] = useState(false);
+
     const getRecent = async() => {
         const arr = await AsyncStorage.getItem('recentlyVisited');
         if (arr !== null) {
@@ -34,28 +41,30 @@ const DataProvider = ({children}: {children: React.ReactNode}) => {
     }
 
     const loadWines = async() => {
-        try {    
-            const headers = { 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhvLXBpbmcua2V1bmdAc3R1ZGVudC5hcC5iZSIsImlhdCI6MTczNDE3OTI1Mn0.yg7or_yACESMbF93I-UwbBelwFh_C2MQCzUEFkVtT_Y' };
+        try {  
+            AsyncStorage.clear();
+            const headers = { 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InMxNTMyNEBhcC5iZSIsImlhdCI6MTczNDI3Nzk0NX0.pLImlOlUePIcXI_tq7wOYwRRd-qHiQDi9xNldtvJvtY' };
             const baseURL = "https://sampleapis.assimilate.be/wines/reds";
             let response = await fetch(baseURL, {headers});
             if (!response.ok){
                 throw new Error(`Failed to fetch ${response.status}, ${response.statusText}`)
             }
             let wines: Wine[] = await response.json();
-            setWines(wines);
-            
+            getRecent();
+            setWines(wines);       
         } catch (error) {
             console.log("Error", error)
+        } finally {
+            setAppIsReady(true);
         }
     };
-  
+    
     useEffect(() => {
         loadWines();
-        getRecent();
-    }, []);
+    },);
 
     return (
-        <DataContext.Provider value={{wines: wines, setWines, loadWines, recent, setRecent, postRecent}}>
+        <DataContext.Provider value={{wines: wines, setWines, loadWines, recent, setRecent, postRecent, appIsReady}}>
             {children}
         </DataContext.Provider>
     );
